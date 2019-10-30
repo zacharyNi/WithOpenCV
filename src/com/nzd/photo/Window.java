@@ -11,6 +11,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.File;
 
 
 import javax.swing.*;
@@ -23,6 +24,7 @@ public class Window extends JFrame{
     private String[] name = {"去雾","油画","锐化","边缘获取"};
     private JTextField textfield;
     private JPanel MyButtons;
+    private JPanel Files;
     Mat mat;
     JLabel imageView;
     public Window()
@@ -35,11 +37,17 @@ public class Window extends JFrame{
         Container container = this.getContentPane();
         container.setLayout(new BorderLayout());
 
+        Files = new JPanel();
+        Files.setLayout(new GridLayout(1,2));
         textfield = new JTextField(30);
         textfield.setEditable(true);
         textfield.setHorizontalAlignment(textfield.LEFT);
         textfield.setPreferredSize(new Dimension(200,30));//setprefersize
-        container.add(textfield,BorderLayout.NORTH);
+        Files.add(textfield);
+        JButton file = new JButton("...");
+        file.addActionListener(new FileSelector());
+        Files.add(file);
+        container.add(Files,BorderLayout.NORTH);
 
         MyButtons = new JPanel();
         MyButtons.setLayout(new GridLayout(4,4));
@@ -91,6 +99,18 @@ public class Window extends JFrame{
             }
         }
 
+    }
+
+    class FileSelector implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser jfc=new JFileChooser();
+            jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES );
+            jfc.showDialog(new JLabel(), "选择");
+            File file=jfc.getSelectedFile();
+            textfield.setText(file.getAbsolutePath());
+        }
     }
 
     public void imshow() {
