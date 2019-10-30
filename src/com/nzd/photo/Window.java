@@ -12,6 +12,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 
 
 import javax.swing.*;
@@ -109,12 +110,17 @@ public class Window extends JFrame{
             jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES );
             jfc.showDialog(new JLabel(), "选择");
             File file=jfc.getSelectedFile();
-            textfield.setText(file.getAbsolutePath());
+            String path = file.getAbsolutePath();
+            try {
+                path =  java.net.URLDecoder.decode(path,"utf-8");
+            } catch (UnsupportedEncodingException e1) {
+                e1.printStackTrace();
+            }
+            textfield.setText(path);
         }
     }
 
     public void imshow() {
-
         Image loadedImage = toBufferedImage(mat);
         JFrame frame = createJFrame(mat.width(), mat.height());
         imageView.setIcon(new ImageIcon(loadedImage));
@@ -138,6 +144,7 @@ public class Window extends JFrame{
         if (matrix.channels() > 1) {
             type = BufferedImage.TYPE_3BYTE_BGR;
         }
+        System.out.println(matrix.cols());
         int bufferSize = matrix.channels() * matrix.cols() * matrix.rows();
         byte[] buffer = new byte[bufferSize];
         matrix.get(0, 0, buffer);
